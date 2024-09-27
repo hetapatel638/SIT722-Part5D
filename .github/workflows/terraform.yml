@@ -44,6 +44,11 @@ jobs:
         run: terraform init
         working-directory: scripts/terraform
 
+      # # This allows the workflow to continue even if the resource is already imported.
+      - name: Terraform Import Resource Group
+        run: terraform import azurerm_resource_group.sit722part5d /subscriptions/0dfabf97-c1bc-4f2c-bcc7-b1c9876c738a/resourceGroups/sit722part5d
+        continue-on-error: true  
+        
       # Run Terraform plan
       - name: Terraform Plan
         run: terraform plan
