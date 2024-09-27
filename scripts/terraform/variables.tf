@@ -5,7 +5,7 @@ variable app_name {
 }
 
 variable resource_group_name {
-  default = ""
+  default = "sit722part5d.azurecr.io"
 }
 
 variable location {
