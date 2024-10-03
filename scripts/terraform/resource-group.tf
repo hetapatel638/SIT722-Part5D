@@ -1,7 +1,7 @@
 #
-# Creates a resource group for sit722part5d in your Azure account.
+# Creates a resource group for sit722week09task05D in your Azure account.
 #
-resource "azurerm_resource_group" "sit722part5d" {
-  name     = "sit722part5d"
-  location = "australiasoutheast"
+resource "azurerm_resource_group" "sit722week09task05D" {
+  name     = var.app_name
+  location = var.location
 }
