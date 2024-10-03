@@ -1,38 +1,27 @@
-# 
-# GitHub Actions workflow.
-#
-# Automatically deploys the python microservice to Kubernetes on push to any branch. 
-# For real use you might want to restrict this to the "prod" branch.
-#
+# GitHub Actions workflow for Terraform integration with Azure
+# Automatically deploys the Python microservice to Kubernetes on any branch push.
 
 name: Terraform integration
 
 on:
-  #
-  # Allows deployment to be invoked manually through the GitHub Actions user interface.
-  #
-  workflow_dispatch: 
-  
-jobs:
+  workflow_dispatch:  # Allows manual deployment from GitHub Actions UI.
 
+jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      
-      # Checks-out your repository under $GITHUB_WORKSPACE.
-      - uses: actions/checkout@v3
+      # Checkout repository
+      - name: Check out repository
+        uses: actions/checkout@v3
 
       # Azure login using Service Principal credentials from GitHub Secrets
-      # Previously : az ad sp create-for-rbac --name "Deakin labs DS - 1216" --role Owner --scopes /subscriptions/1af860c3-e4f4-4c2c-9b63-46be27b4406b
-      # creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Azure Login
-        # uses: azure/login@v1
-        # with:
-        #   creds: ${{ secrets.AZURE_CREDENTIALS }}
-        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Run az cli commands
+      # List Azure resource groups as a test
       - name: List Azure Resource Groups
         run: az group list
 
@@ -42,47 +31,46 @@ jobs:
         with:
           terraform_version: 1.5.6
 
-      # Initialize Terraform
+      # Terraform initialization
       - name: Terraform Init
         run: terraform init
         working-directory: scripts/terraform
 
-      # Run Terraform plan
+      # Terraform plan
       - name: Terraform Plan
         run: terraform plan
         working-directory: scripts/terraform
         continue-on-error: true
 
-      # Optionally, apply Terraform changes (use cautiously in production!)
+      # Apply Terraform changes only on the main branch
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve
         working-directory: scripts/terraform
         continue-on-error: true
-      
-      # Upload Terraform state file to GIT
+
+      # Upload Terraform state file
       - name: Upload Terraform state file
         uses: actions/upload-artifact@v3
         with:
           name: terraform-state-file
           path: ./scripts/terraform/terraform.tfstate
 
-      # Install required dependencies
+      # Install dependencies for GitHub CLI and jq
       - name: Install dependencies
         run: |
           sudo apt install gh -y
           sudo apt install jq -y
 
-      # Login tot GitHub-CLI using token
-      - name: GitHub-Cli login
-        run: |
-          echo "${{ secrets.TOKEN }}" | gh auth login --with-token
+      # GitHub CLI login using token
+      - name: GitHub-CLI Login
+        run: echo "${{ secrets.TOKEN }}" | gh auth login --with-token
 
-      # Refresh terraform state
-      - name: Refresh terraform state
+      # Refresh Terraform state
+      - name: Refresh Terraform state
         run: terraform refresh
 
-      # Set Container registry, registry username, password and kubernetes config
+      # Set Azure Container Registry, registry username, and Kubernetes config
       - name: Set Secrets
         run: |
           azure_container_registry_name=$(az acr list | jq -r '.[0].loginServer')
