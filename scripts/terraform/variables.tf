@@ -9,7 +9,7 @@ variable resource_group_name {
 }
 
 variable location {
-  default = "australiasoutheast"
+  default = "australiaeast"
 }
 
 variable kubernetes_version {    
