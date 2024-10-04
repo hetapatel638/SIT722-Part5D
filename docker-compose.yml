@@ -1,28 +1,21 @@
-version: '3'
+# Your Solution
+version: '3.8'
+
 services:
-
-  book-catalog:
-    image: book-catalog
-    build: 
-      context: ./book_catalog
-      dockerfile: Dockerfile
-    container_name: book-catalog
+  book_catalog:
+    image: project5.azurecr.io/book_catalog:latest
+    container_name: book_catalog
     ports:
-      - "8081:8081"
+      - "8001:8000"
     environment:
-      - PORT=8081
-      - DATABASE_URL=$DATABASE_URL
-    restart: "no"
+      - DATABASE_URL=postgresql://sit722part5d_user:idSW2qLrAhTnjWEy5TEYx9jzgUN314qz@dpg-crrc88d6l47c73chaggg-a.oregon-postgres.render.com/sit722part5d
 
-  inventory-management:
-    image: inventory-management
-    build: 
-      context: ./inventory_management
-      dockerfile: Dockerfile
-    container_name: inventory-management
+  inventory_management:
+    image: project5.azurecr.io/inventory_management:latest
+    container_name: inventory_management
     ports:
-     - "8082:8082"
+      - "8002:8000"
     environment:
-      - PORT=8082
-      - DATABASE_URL=$DATABASE_URL
-    restart: "no"
+      - DATABASE_URL=postgresql://sit722part5d_user:idSW2qLrAhTnjWEy5TEYx9jzgUN314qz@dpg-crrc88d6l47c73chaggg-a.oregon-postgres.render.com/sit722part5d
+
+  
