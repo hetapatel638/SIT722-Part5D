@@ -1,17 +1,16 @@
-# Initialises Terraform providers and sets their version numbers.
-
+provider "azurerm" {
+    features {}
+    skip_provider_registration = true
+}
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.71.0"
+      version = "~> 3.75.0" # or the latest stable version
     }
   }
-
-  required_version = ">= 1.5.6"
 }
 
 provider "azurerm" {
-    features {}
-    skip_provider_registration = true
+  features {}
 }
