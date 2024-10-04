@@ -16,5 +16,5 @@ variable app_name {
 }
 
 variable kubernetes_version {
-  default = "1.30.3"
+  default = "1.30.2"
 }
